@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخيم الواحة | تجربة فاخرة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2D5A27; /* أخضر ملكي */
+            --accent: #D4A373;  /* ذهبي رملي */
+            --bg-light: #F8F9FA;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.85);
+            --shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: #1a1a1a; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* إطار التطبيق بشكل عصري */
+        .app-container {
+            width: 375px; 
+            height: 780px; 
+            background: var(--bg-light);
+            position: relative; 
+            overflow-y: auto; 
+            overflow-x: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border-radius: 35px;
+            scrollbar-width: none;
+        }
+        .app-container::-webkit-scrollbar { display: none; }
+
+        /* الهيدر الزجاجي */
+        header {
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            position: absolute; 
+            top: 0; width: 100%; 
+            box-sizing: border-box; 
+            z-index: 100;
+        }
+        header .icon-btn {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        /* نظام الصفحات */
+        .page { display: none; min-height: 100%; }
+        .page.active { display: block; animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* السلايدر */
+        .swiper { width: 100%; height: 420px; border-radius: 0 0 40px 40px; }
+        .swiper-slide { background-size: cover; background-position: center; position: relative; }
+        .swiper-slide::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 10%, transparent 50%);
+        }
+        .slide-content { 
+            position: absolute; bottom: 60px; right: 25px; left: 25px; 
+            z-index: 10; color: white;
+        }
+        .slide-content h1 { font-size: 28px; margin: 0; font-weight: 800; }
+
+        /* الأزرار العائمة */
+        .floating-actions {
+            display: flex; gap: 15px; padding: 0 25px;
+            margin-top: -35px; position: relative; z-index: 20;
+        }
+        .btn {
+            flex: 1; padding: 18px; border-radius: 20px; border: none;
+            font-weight: 700; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; gap: 8px;
+            transition: 0.3s; box-shadow: var(--shadow); font-family: inherit;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-white { background: var(--white); color: var(--primary); }
+        .btn:active { transform: scale(0.95); }
+
+        /* البطاقات */
+        .section-title { padding: 25px 25px 10px; font-weight: 700; color: var(--primary); font-size: 18px; }
+        .card {
+            background: var(--white); padding: 20px; border-radius: 25px;
+            margin: 0 20px 20px; box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .card h3 { margin: 0 0 10px; font-size: 16px; }
+        .card p { margin: 0; color: #666; font-size: 13px; line-height: 1.6; }
+
+        /* القائمة الجانبية */
+        #sideMenu {
+            position: fixed; top: 0; right: -300px; width: 280px; height: 100%;
+            background: var(--white); z-index: 2000; transition: 0.4s;
+            padding: 40px 20px; border-radius: 40px 0 0 40px;
+        }
+        .menu-item {
+            padding: 15px; display: flex; align-items: center; gap: 15px;
+            font-weight: 600; color: var(--primary); cursor: pointer;
+            border-radius: 12px; margin-bottom: 5px;
+        }
+        .menu-item:hover { background: #f0f0f0; }
+
+        /* فورم الحجز */
+        .form-card { background: white; margin: 20px; border-radius: 25px; padding: 20px; box-shadow: var(--shadow); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 13px; color: #888; font-weight: 600; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee;
+            background: #fdfdfd; font-family: inherit; outline: none; box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="sideMenu">
+        <h2 style="color: var(--primary); margin-bottom: 30px;">المكتشف</h2>
+        <div class="menu-item" onclick="showPage('home'); toggleMenu()"><i class="fas fa-home"></i> الرئيسية</div>
+        <div class="menu-item" onclick="showPage('booking'); toggleMenu()"><i class="fas fa-calendar-check"></i> حجوزاتي</div>
+        <div class="menu-item" onclick="showPage('admin'); toggleMenu()"><i class="fas fa-shield-alt"></i> الإدارة</div>
+        <hr style="opacity: 0.1; margin: 20px 0;">
+        <div class="menu-item" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
+    </div>
+
+    <div id="home" class="page active">
+        <header>
+            <div class="icon-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            <div class="icon-btn"><i class="fas fa-bell"></i></div>
+        </header>
+
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1533142262417-40af28304b21?auto=format&fit=crop&q=80&w=500')">
+                    <div class="slide-content"><h1>واحة الهدوء</h1><p>استمتع بتجربة تخييم لا مثيل لها</p></div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&q=80&w=500')">
+                    <div class="slide-content"><h1>فخامة التفاصيل</h1><p>خيم ملكية مجهزة بالكامل</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="floating-actions">
+            <button class="btn btn-primary" onclick="showPage('booking')">احجز الآن <i class="fas fa-arrow-left"></i></button>
+            <button class="btn btn-white"><i class="fas fa-phone"></i> اتصل</button>
+        </div>
+
+        <div class="section-title">مميزاتنا</div>
+        <div class="card">
+            <h3><i class="fas fa-wifi" style="color: var(--accent);"></i> إنترنت فائق السرعة</h3>
+            <p>ابقَ متصلاً حتى وأنت في قلب الصحراء مع شبكة الألياف البصرية الخاصة بنا.</p>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-utensils" style="color: var(--accent);"></i> مطبخ شرقي فاخر</h3>
+            <p>نقدم أشهى المأكولات الشعبية والمشويات تحت إشراف أمهر الطهاة.</p>
+        </div>
+    </div>
+
+    <div id="booking" class="page">
+        <div style="padding: 60px 25px 20px;">
+            <div class="icon-btn" onclick="showPage('home')" style="background: var(--primary); color: white;"><i class="fas fa-chevron-right"></i></div>
+            <h2 style="margin-top: 20px; color: var(--primary);">حجز تجربة جديدة</h2>
+        </div>
+
+        <div class="form-card">
+            <div class="form-group">
+                <label>تاريخ الوصول</label>
+                <input type="date" id="bookDate">
+            </div>
+            <div class="form-group">
+                <label>نوع الإقامة</label>
+                <select id="tentStyle">
+                    <option>الجناح الملكي - 150$</option>
+                    <option>خيمة الرحالة - 80$</option>
+                    <option>جلسة المساء - 40$</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="saveBooking()">تأكيد الحجز</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    // تهيئة السلايدر
+    new Swiper(".mySwiper", {
+        autoplay: { delay: 4000 },
+        effect: "fade",
+        loop: true
+    });
+
+    // دالة التنقل
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    // القائمة الجانبية
+    function toggleMenu() {
+        const menu = document.getElementById('sideMenu');
+        const isOpen = menu.style.right === '0px';
+        menu.style.right = isOpen ? '-300px' : '0px';
+    }
+
+    // دالة الحفظ (تجريبية)
+    function saveBooking() {
+        const date = document.getElementById('bookDate').value;
+        if(!date) return alert("لطفاً، اختر التاريخ");
+        alert("تم استلام طلبك! سنتواصل معك قريباً.");
+        showPage('home');
+    }
+</script>
+
+</body>
+</html>

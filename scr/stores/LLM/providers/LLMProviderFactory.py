@@ -1,0 +1,36 @@
+from ..LLMEnums import LLMEnums
+from .CoHereProvider import CoHereProvider
+from .OpenAIProvider import OpenAIProvider
+
+class LLMProviderFactory:
+
+    def __init__(self,config:dict):
+
+        self.config = config
+
+    def create(self,provider:str):
+        if provider == LLMEnums.OPENAI.value:
+            return OpenAIProvider(
+            api_key =self.config.OPENAI_API_KEY,
+            api_url = self.config.OPENAI_API_URL,
+            default_input_max_characters=self.config.INPUT_DAFAULT_MAX_CHARACTERS,
+            default_out_put_max_characters=self.config.GENERATION_DAFAULT_MAX_TOKENS,
+            default_generation_temperature= self.config.GENERATION_DAFAULT_TEMPERATURE
+            )
+            
+            
+        elif provider == LLMEnums.COHERE.value:
+
+            return CoHereProvider(
+                api_key=self.config.COHERE_API_KEY,
+                default_input_max_characters=self.config.INPUT_DAFAULT_MAX_CHARACTERS,
+                default_out_put_max_characters=self.config.GENERATION_DAFAULT_MAX_TOKENS,
+                default_generation_temperature=self.config.GENERATION_DAFAULT_TEMPERATURE
+            )
+        else:
+            raise ValueError(f"Provider {provider} not supported")
+
+        # Hugging Face embeddings provider has been removed.
+        # If requested, return None to surface a clear configuration issue.
+        
+

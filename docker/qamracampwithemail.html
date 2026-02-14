@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخيم قمرا - نظام الحجوزات الذكي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <style>
+        :root { 
+            --primary: #2D5A27; 
+            --primary-dark: #1e3f1a;
+            --accent: #F5E6CA; 
+            --dark: #1a1a1a; 
+            --white: #ffffff; 
+            --gray: #f8f9fa;
+            --danger: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #333; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+        }
+        
+        .app-container { 
+            width: 375px; 
+            min-height: 100vh; 
+            background: var(--white); 
+            position: relative; 
+            overflow-y: auto; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
+        
+        .page { 
+            display: none; 
+            padding-bottom: 30px; 
+        }
+        
+        .page.active { 
+            display: block; 
+            animation: fadeIn 0.4s ease; 
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        
+        header { 
+            padding: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: absolute; 
+            top: 0; 
+            width: 100%; 
+            z-index: 100; 
+            color: var(--white); 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); 
+            box-sizing: border-box; 
+        }
+        
+        .btn { 
+            padding: 14px; 
+            border-radius: 30px; 
+            border: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            text-decoration: none; 
+            width: 100%; 
+            transition: all 0.3s ease; 
+        }
+        
+        .btn-primary { 
+            background: var(--primary); 
+            color: white; 
+        }
+        
+        .btn-primary:hover:not(:disabled) { 
+            background: var(--primary-dark); 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45,90,39,0.3);
+        }
+        
+        .btn-primary:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            opacity: 0.6;
+        }
+        
+        .btn-outline { 
+            background: white; 
+            color: var(--primary); 
+            border: 2px solid var(--primary); 
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            width: auto;
+        }
+        
+        .form-group { 
+            margin: 15px 20px; 
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+            color: var(--primary); 
+        }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 10px; 
+            border: 1px solid #ddd; 
+            outline: none; 
+            box-sizing: border-box; 
+            font-family: inherit; 
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(45,90,39,0.1);
+        }
+        
+        .admin-list-item { 
+            background: white; 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            border-right: 5px solid var(--primary); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            transition: transform 0.2s;
+        }
+        
+        .admin-list-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        #loader { 
+            display: none; 
+            text-align: center; 
+            padding: 10px; 
+            color: var(--primary); 
+            font-weight: bold; 
+        }
+        
+        .error-message { 
+            color: var(--danger); 
+            font-size: 0.85em; 
+            margin-top: 5px; 
+            display: none; 
+        }
+        
+        .success-message { 
+            color: var(--success); 
+            font-size: 0.85em; 
+            margin-top: 5px; 
+        }
+        
+        .price-badge { 
+            background: var(--primary); 
+            color: white; 
+            padding: 3px 8px; 
+            border-radius: 15px; 
+            font-size: 0.8em; 
+            margin-right: 5px; 
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-new { background: var(--warning); color: #000; }
+        .status-confirmed { background: var(--success); color: white; }
+        .status-cancelled { background: var(--danger); color: white; }
+        
+        .summary-card {
+            background: var(--accent);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- الصفحة الرئيسية -->
+    <div id="home" class="page active">
+        <header>
+            <i class="fas fa-user-shield" onclick="showPage('admin')" style="cursor:pointer; font-size: 1.2em;"></i>
+            <span style="font-weight: bold; font-size: 1.2em;">مخيم قمرا</span>
+            <i class="fas fa-calendar-check" onclick="showPage('booking')" style="cursor:pointer; font-size: 1.2em;"></i>
+        </header>
+        
+        <div class="swiper mySwiper" style="height: 300px;">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500'); background-size: cover; background-position: center;"></div>
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=500'); background-size: cover; background-position: center;"></div>
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=500'); background-size: cover; background-position: center;"></div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+        
+        <div style="padding: 20px;">
+            <button class="btn btn-primary" onclick="showPage('booking')">
+                <i class="fas fa-calendar-plus"></i>
+                إبدأ الحجز الآن
+            </button>
+            
+            <div class="summary-card">
+                <h3 style="color: var(--primary); margin-top: 0;">مرحباً بكم في مخيم قمرا</h3>
+                <p style="margin:0; line-height: 1.6;">استمتع بأجمل الأجواء في قلب الطبيعة مع خصوصية تامة للعائلات. خدمات راقية ومناظر خلابة تنتظركم.</p>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px; color: var(--primary);">
+                    <div style="flex: 1; text-align: center;">
+                        <i class="fas fa-tree fa-2x"></i>
+                        <div style="font-size: 0.8em;">طبيعة خلابة</div>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <i class="fas fa-home fa-2x"></i>
+                        <div style="font-size: 0.8em;">خصوصية تامة</div>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <i class="fas fa-wifi fa-2x"></i>
+                        <div style="font-size: 0.8em;">خدمات متكاملة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة الحجز -->
+    <div id="booking" class="page">
+        <div style="padding: 20px; background: var(--primary); color: white; display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-arrow-right" onclick="showPage('home')" style="cursor:pointer; font-size: 1.2em;"></i>
+            <span style="font-weight: bold; font-size: 1.2em;">بيانات الحجز</span>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-user"></i> الاسم بالكامل</label>
+            <input type="text" id="userName" placeholder="الاسم الثلاثي" autocomplete="name">
+            <div class="error-message" id="nameError"></div>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-phone"></i> رقم الهاتف (واتساب)</label>
+            <input type="tel" id="userPhone" placeholder="05xxxxxxxx" autocomplete="tel">
+            <div class="error-message" id="phoneError"></div>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-envelope"></i> البريد الإلكتروني (اختياري)</label>
+            <input type="email" id="userEmail" placeholder="name@example.com" autocomplete="email">
+            <div class="error-message" id="emailError"></div>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-calendar"></i> تاريخ الحجز</label>
+            <input type="date" id="bookDate" onchange="checkAvailability()">
+            <small id="dateStatus" style="font-weight: bold;"></small>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-umbrella"></i> نوع الخيمة</label>
+            <select id="tentStyle" onchange="updatePrice()">
+                <option value="ملكية">مخيم ملكي (80 KD)</option>
+                <option value="كلاسيكية">خيمة كلاسيك (90$)</option>
+                <option value="مجلس">مجلس خارجي (50$)</option>
+            </select>
+        </div>
+        
+        <div class="form-group" style="background: var(--accent); padding: 15px; border-radius: 10px;">
+            <div class="summary-row">
+                <span>سعر الخيمة:</span>
+                <span><span id="totalPrice">80</span>KD</span>
+            </div>
+            <div class="summary-row">
+                <span>الضريبة:</span>
+                <span>شاملة</span>
+            </div>
+            <div class="summary-row" style="font-weight: bold; color: var(--primary);">
+                <span>الإجمالي:</span>
+                <span><span id="finalPrice">150</span>$</span>
+            </div>
+        </div>
+
+        <div id="loader">
+            <i class="fas fa-spinner fa-spin"></i> جاري معالجة الحجز...
+        </div>
+        
+        <div style="padding: 20px;">
+            <button id="confirmBtn" class="btn btn-primary" onclick="saveBooking()">
+                <i class="fas fa-check-circle"></i>
+                تأكيد الحجز واستلام الإشعار
+            </button>
+        </div>
+    </div>
+
+    <!-- صفحة نجاح الحجز -->
+    <div id="success" class="page" style="text-align: center; padding: 50px 20px;">
+        <i class="fas fa-check-circle" style="font-size: 80px; color: var(--primary);"></i>
+        <h2 style="color: var(--primary);">تم الحجز بنجاح! 🎉</h2>
+        <p>تم إرسال تفاصيل الحجز إلى:</p>
+        <p><i class="fas fa-envelope"></i> بريدك الإلكتروني</p>
+        <p><i class="fab fa-whatsapp"></i> واتساب الإدارة</p>
+        <p style="margin-top: 20px; font-size: 0.9em; color: #666;">سيتم التواصل معك قريباً لتأكيد التفاصيل</p>
+        
+        <div style="margin-top: 30px;">
+            <button class="btn btn-outline" style="margin-bottom: 10px;" onclick="showPage('home')">
+                <i class="fas fa-home"></i>
+                العودة للرئيسية
+            </button>
+            <button class="btn btn-primary" onclick="window.open('https://wa.me/966500000000', '_blank')">
+                <i class="fab fa-whatsapp"></i>
+                تواصل معنا واتساب
+            </button>
+        </div>
+    </div>
+
+    <!-- صفحة الإدارة -->
+    <div id="admin" class="page" style="background: var(--gray);">
+        <div id="adminAuth" style="padding: 50px 20px; text-align: center;">
+            <i class="fas fa-lock" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+            <h3 style="color: var(--primary);">دخول الإدارة</h3>
+            
+            <div style="max-width: 300px; margin: 0 auto;">
+                <div class="form-group">
+                    <input type="email" id="adminEmail" placeholder="البريد الإلكتروني" style="text-align: right;">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="adminPass" placeholder="كلمة المرور" style="text-align: right;">
+                </div>
+                
+                <button class="btn btn-primary" onclick="handleLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    دخول
+                </button>
+            </div>
+        </div>
+        
+        <div id="adminPanel" style="display: none;">
+            <div style="padding: 20px; background: var(--dark); color: white; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <i class="fas fa-crown" style="color: var(--warning);"></i>
+                    <span style="margin-right: 10px;">لوحة التحكم</span>
+                </div>
+                <div>
+                    <i class="fas fa-envelope" onclick="testEmailJS()" style="cursor:pointer; margin-left: 15px;" title="اختبار الإيميل"></i>
+                    <i class="fas fa-sync-alt" onclick="refreshAdmin()" style="cursor:pointer; margin-left: 15px;" title="تحديث"></i>
+                    <i class="fas fa-sign-out-alt" onclick="handleLogout()" style="cursor:pointer" title="تسجيل خروج"></i>
+                </div>
+            </div>
+            
+            <div style="padding: 20px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <div style="flex: 1; background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <i class="fas fa-calendar-check" style="color: var(--primary); font-size: 24px;"></i>
+                        <div style="font-size: 20px; font-weight: bold; margin: 5px 0;" id="totalBookings">0</div>
+                        <div style="font-size: 12px; color: #666;">إجمالي الحجوزات</div>
+                    </div>
+                    <div style="flex: 1; background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <i class="fas fa-clock" style="color: var(--warning); font-size: 24px;"></i>
+                        <div style="font-size: 20px; font-weight: bold; margin: 5px 0;" id="todayBookings">0</div>
+                        <div style="font-size: 12px; color: #666;">حجوزات اليوم</div>
+                    </div>
+                </div>
+                
+                <div id="adminContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- رسالة منبثقة -->
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // ========== إعدادات Firebase ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyDIoug-ZB6k81g5L0PZVQHAgR8pZ_77Oa8",
+        authDomain: "qamra-camp.firebaseapp.com",
+        projectId: "qamra-camp",
+        storageBucket: "qamra-camp.firebasestorage.app",
+        messagingSenderId: "23824989973",
+        appId: "1:23824989973:web:33be0603fdbc55a83f731c",
+        measurementId: "G-FZ78RWVRM4"
+    };
+
+    // ========== إعدادات EmailJS ==========
+    // مهم: استبدل هذه القيم بالقيم الصحيحة من حساب EmailJS الخاص بك
+    const EMAILJS_CONFIG = {
+        PUBLIC_KEY: "jBVTOeiOXc2urHQDm",          // المفتاح العام من EmailJS
+        SERVICE_ID: "service_xxxxxx",            // معرف الخدمة
+        TEMPLATE_ID: "template_xxxxxx"           // معرف القالب
+    };
+
+    // ========== إعدادات واتساب ==========
+    const WHATSAPP_CONFIG = {
+        ADMIN_NUMBER: "96566676941",            // رقم الإدارة (مفتاح الدولة بدون +)
+        COUNTRY_CODE: ""                       // مفتاح الدولة (السعودية)
+    };
+
+    // تهيئة EmailJS
+    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+
+    // تهيئة Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // ========== المتغيرات العامة ==========
+    let reservedDates = [];
+    let allBookings = [];
+
+    // تجاهل تحذيرات OAuth للتطوير المحلي
+    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+        const originalWarn = console.warn;
+        console.warn = function() {
+            if (arguments[0] && typeof arguments[0] === 'string' && 
+                arguments[0].includes('is not authorized for OAuth operations')) {
+                return;
+            }
+            originalWarn.apply(console, arguments);
+        };
+    }
+
+    // ========== دالة عرض الإشعارات ==========
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+        toast.style.display = 'block';
+        
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
+    // ========== جلب التواريخ المحجوزة ==========
+    onSnapshot(collection(db, "bookings"), (snap) => {
+        reservedDates = snap.docs.map(doc => doc.data().date);
+        allBookings = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+
+    // ========== دوال الحجز ==========
+    window.updatePrice = () => {
+        const tentStyle = document.getElementById('tentStyle').value;
+        let price = 0;
+        switch(tentStyle) {
+            case 'ملكية': price = 150; break;
+            case 'كلاسيكية': price = 90; break;
+            case 'مجلس': price = 50; break;
+        }
+        document.getElementById('totalPrice').textContent = price;
+        document.getElementById('finalPrice').textContent = price;
+    };
+
+    function validateForm() {
+        let isValid = true;
+        const name = document.getElementById('userName').value.trim();
+        const phone = document.getElementById('userPhone').value.trim();
+        const email = document.getElementById('userEmail').value.trim();
+        const date = document.getElementById('bookDate').value;
+
+        // إخفاء جميع رسائل الخطأ
+        document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+        if (!name) {
+            document.getElementById('nameError').textContent = 'الرجاء إدخال الاسم';
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!phone) {
+            document.getElementById('phoneError').textContent = 'الرجاء إدخال رقم الهاتف';
+            document.getElementById('phoneError').style.display = 'block';
+            isValid = false;
+        } else if (!/^965\d{8}$/.test(phone)) {
+            document.getElementById('phoneError').textContent = 'رقم الهاتف غير صحيح (965xxxxxxxx)';
+            document.getElementById('phoneError').style.display = 'block';
+            isValid = false;
+        }
+
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            document.getElementById('emailError').textContent = 'البريد الإلكتروني غير صحيح';
+            document.getElementById('emailError').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!date) {
+            document.getElementById('dateStatus').innerHTML = '⚠️ الرجاء اختيار تاريخ';
+            document.getElementById('dateStatus').style.color = 'red';
+            isValid = false;
+        } else if (reservedDates.includes(date)) {
+            document.getElementById('dateStatus').innerHTML = '❌ هذا التاريخ محجوز';
+            document.getElementById('dateStatus').style.color = 'red';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    window.checkAvailability = () => {
+        const selected = document.getElementById('bookDate').value;
+        const status = document.getElementById('dateStatus');
+        const btn = document.getElementById('confirmBtn');
+        
+        if (!selected) return;
+        
+        if (reservedDates.includes(selected)) {
+            status.innerText = "❌ هذا التاريخ محجوز للأسف!";
+            status.style.color = "red";
+            btn.disabled = true;
+        } else {
+            status.innerText = "✅ التاريخ متاح للحجز";
+            status.style.color = "green";
+            btn.disabled = false;
+        }
+    };
+
+    // ========== دوال إرسال الإشعارات ==========
+    async function sendEmailNotification(bookingData) {
+        try {
+            await emailjs.send(
+                EMAILJS_CONFIG.SERVICE_ID,
+                EMAILJS_CONFIG.TEMPLATE_ID,
+                {
+                    user_name: bookingData.name,
+                    user_email: bookingData.email,
+                    booking_date: bookingData.date,
+                    tent_style: bookingData.style,
+                    user_phone: bookingData.phone,
+                    booking_price: bookingData.price
+                }
+            );
+            console.log("✅ تم إرسال الإيميل بنجاح");
+            return true;
+        } catch (error) {
+            console.error("❌ فشل إرسال الإيميل:", error);
+            return false;
+        }
+    }
+
+    function sendWhatsAppNotifications(bookingData) {
+        try {
+            // تنظيف رقم العميل
+            const cleanClientPhone = bookingData.phone.replace(/^0+/, '');
+            const clientWhatsApp = WHATSAPP_CONFIG.COUNTRY_CODE + cleanClientPhone;
+            
+            // رسالة للإدارة
+            const adminMessage = `🔔 *حجز جديد في مخيم الواحة* 🔔
+            
+👤 *الاسم:* ${bookingData.name}
+📞 *الهاتف:* ${bookingData.phone}
+📧 *البريد:* ${bookingData.email}
+📅 *التاريخ:* ${bookingData.date}
+⛺ *الخيمة:* ${bookingData.style}
+💰 *السعر:* ${bookingData.price}$
+
+✅ تم تأكيد الحجز بنجاح`;
+
+            // رسالة للعميل
+            const clientMessage = `✨ *مرحباً ${bookingData.name}* ✨
+
+تم تأكيد حجزك في *مخيم قمرا* بنجاح ✅
+
+📅 تاريخ الحجز: ${bookingData.date}
+⛺ نوع الخيمة: ${bookingData.style}
+💰 السعر: ${bookingData.price}$
+
+سنقوم بالتواصل معك قريباً لتأكيد التفاصيل.
+للاستفسار: واتساب الإدارة
+
+نتمنى لك إقامة سعيدة 🌟`;
+
+            // فتح واتساب الإدارة
+            window.open(`https://wa.me/${WHATSAPP_CONFIG.ADMIN_NUMBER}?text=${encodeURIComponent(adminMessage)}`, '_blank');
+            
+            // فتح واتساب العميل (مع تأخير بسيط)
+            setTimeout(() => {
+                window.open(`https://wa.me/${clientWhatsApp}?text=${encodeURIComponent(clientMessage)}`, '_blank');
+            }, 1000);
+            
+            console.log("✅ تم فتح واتساب بنجاح");
+        } catch (error) {
+            console.error("❌ فشل فتح واتساب:", error);
+        }
+    }
+
+    // ========== دالة حفظ الحجز ==========
+    window.saveBooking = async () => {
+        if (!validateForm()) return;
+
+        const data = {
+            name: document.getElementById('userName').value.trim(),
+            phone: document.getElementById('userPhone').value.trim(),
+            email: document.getElementById('userEmail').value.trim() || 'لا يوجد',
+            date: document.getElementById('bookDate').value,
+            style: document.getElementById('tentStyle').value,
+            price: document.getElementById('totalPrice').textContent,
+            status: 'جديد',
+            createdAt: new Date()
+        };
+
+        document.getElementById('loader').style.display = "block";
+        document.getElementById('confirmBtn').disabled = true;
+
+        try {
+            // حفظ في Firebase
+            const docRef = await addDoc(collection(db, "bookings"), data);
+            console.log("✅ تم حفظ الحجز في Firebase:", docRef.id);
+
+            // إرسال الإيميل
+            await sendEmailNotification(data);
+            
+            // إرسال واتساب
+            sendWhatsAppNotifications(data);
+
+            showToast("تم الحجز بنجاح! جاري تحويلك...", "success");
+            
+            // التأخير قبل الانتقال لصفحة النجاح
+            setTimeout(() => {
+                showPage('success');
+            }, 1500);
+            
+            // تنظيف الحقول
+            document.getElementById('userName').value = '';
+            document.getElementById('userPhone').value = '';
+            document.getElementById('userEmail').value = '';
+            document.getElementById('bookDate').value = '';
+            
+        } catch (e) {
+            console.error("❌ خطأ في الحجز:", e);
+            showToast("حدث خطأ في النظام. الرجاء المحاولة مرة أخرى.", "error");
+        } finally {
+            document.getElementById('loader').style.display = "none";
+            document.getElementById('confirmBtn').disabled = false;
+        }
+    };
+
+    // ========== دوال الإدارة ==========
+    window.handleLogin = async () => {
+        const email = document.getElementById('adminEmail').value;
+        const pass = document.getElementById('adminPass').value;
+        
+        if (!email || !pass) {
+            showToast("الرجاء إدخال البريد وكلمة المرور", "error");
+            return;
+        }
+        
+        try { 
+            await signInWithEmailAndPassword(auth, email, pass); 
+            showToast("تم تسجيل الدخول بنجاح", "success");
+        } catch (e) { 
+            showToast("بيانات الدخول غير صحيحة", "error");
+        }
+    };
+    
+    window.handleLogout = () => {
+        signOut(auth);
+        showToast("تم تسجيل الخروج", "success");
+    };
+
+    window.refreshAdmin = () => {
+        if (auth.currentUser) {
+            loadAdminData();
+            showToast("تم تحديث البيانات", "success");
+        }
+    };
+
+    async function loadAdminData() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "bookings"));
+            const today = new Date().toISOString().split('T')[0];
+            let total = 0;
+            let todayCount = 0;
+            
+            querySnapshot.forEach((doc) => {
+                total++;
+                if (doc.data().date === today) {
+                    todayCount++;
+                }
+            });
+            
+            document.getElementById('totalBookings').textContent = total;
+            document.getElementById('todayBookings').textContent = todayCount;
+        } catch (error) {
+            console.error("Error loading admin data:", error);
+        }
+    }
+
+    // ========== مراقبة حالة المصادقة ==========
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('adminAuth').style.display = "none";
+            document.getElementById('adminPanel').style.display = "block";
+            
+            loadAdminData();
+            
+            const q = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snap) => {
+                const container = document.getElementById('adminContent');
+                container.innerHTML = "<h4 style='margin-bottom: 15px;'>📋 جميع الحجوزات</h4>";
+                
+                if (snap.empty) {
+                    container.innerHTML += "<p style='text-align: center; color: #666;'>لا توجد حجوزات حالياً</p>";
+                    return;
+                }
+                
+                snap.forEach((doc) => {
+                    const b = doc.data();
+                    const bookingDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date();
+                    
+                    container.innerHTML += `
+                        <div class="admin-list-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong style="color: var(--primary);">👤 ${b.name || 'غير محدد'}</strong>
+                                <span class="status-badge status-new">جديد</span>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                                <div>
+                                    <small style="color: #666;">📞 الهاتف</small><br>
+                                    <a href="tel:${b.phone}" style="text-decoration: none; color: var(--primary);">${b.phone}</a>
+                                </div>
+                                <div>
+                                    <small style="color: #666;">📧 البريد</small><br>
+                                    <span style="font-size: 0.9em;">${b.email || 'لا يوجد'}</span>
+                                </div>
+                                <div>
+                                    <small style="color: #666;">📅 التاريخ</small><br>
+                                    <span>${b.date || 'غير محدد'}</span>
+                                </div>
+                                <div>
+                                    <small style="color: #666;">⛺ الخيمة</small><br>
+                                    <span>${b.style || 'غير محدد'}</span>
+                                </div>
+                                <div>
+                                    <small style="color: #666;">💰 السعر</small><br>
+                                    <span style="font-weight: bold; color: var(--primary);">${b.price || '?'}$</span>
+                                </div>
+                                <div>
+                                    <small style="color: #666;">📅 تاريخ الحجز</small><br>
+                                    <span style="font-size: 0.85em;">${bookingDate.toLocaleDateString('ar-SA')}</span>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                <button class="btn-small" style="flex: 1; background: var(--success); color: white; border: none; border-radius: 5px; padding: 5px;" onclick="window.open('https://wa.me/${WHATSAPP_CONFIG.COUNTRY_CODE}${b.phone.replace(/^0+/, '')}', '_blank')">
+                                    <i class="fab fa-whatsapp"></i> واتساب
+                                </button>
+                                <button class="btn-small" style="flex: 1; background: var(--primary); color: white; border: none; border-radius: 5px; padding: 5px;" onclick="window.open('tel:${b.phone}')">
+                                    <i class="fas fa-phone"></i> اتصال
+                                </button>
+                            </div>
+                        </div>`;
+                });
+            });
+        } else {
+            document.getElementById('adminAuth').style.display = "block";
+            document.getElementById('adminPanel').style.display = "none";
+        }
+    });
+
+    // ========== دالة اختبار EmailJS ==========
+    window.testEmailJS = async () => {
+        try {
+            const result = await emailjs.send(
+                EMAILJS_CONFIG.SERVICE_ID,
+                EMAILJS_CONFIG.TEMPLATE_ID,
+                {
+                    user_name: "اختبار",
+                    user_email: "test@example.com",
+                    booking_date: "2024-01-01",
+                    tent_style: "اختبار",
+                    user_phone: "009500000000",
+                    booking_price: "150"
+                }
+            );
+            showToast("✅ تم إرسال الإيميل التجريبي بنجاح", "success");
+        } catch (error) {
+            console.error("❌ فشل اختبار الإيميل:", error);
+            showToast("❌ فشل إرسال الإيميل: " + (error.text || "خطأ في الاتصال"), "error");
+        }
+    };
+
+    // ========== دوال التنقل ==========
+    window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // ========== التهيئة عند تحميل الصفحة ==========
+    window.onload = () => {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const tomorrowStr = tomorrow.toISOString().split("T")[0];
+        document.getElementById('bookDate').min = tomorrowStr;
+        
+        updatePrice();
+        
+        // تهيئة السلايدر
+        new Swiper(".mySwiper", { 
+            loop: true, 
+            autoplay: { delay: 3000, disableOnInteraction: false },
+            pagination: { el: ".swiper-pagination", clickable: true },
+            effect: 'fade',
+            fadeEffect: { crossFade: true }
+        });
+        
+        console.log("✅ تم تحميل التطبيق بنجاح");
+    };
+</script>
+
+<!-- سكريبت السلايدر -->
+<script>
+    // تهيئة السلايدر (للتأكد من عمله)
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof Swiper !== 'undefined') {
+            new Swiper(".mySwiper", { 
+                loop: true, 
+                autoplay: { delay: 3000, disableOnInteraction: false },
+                pagination: { el: ".swiper-pagination", clickable: true }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

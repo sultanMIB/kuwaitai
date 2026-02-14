@@ -1,0 +1,12 @@
+.env.postgres
+.env.fastapi
+.env.grafana
+.env.prometheus
+.env.app
+!.env.postgres.example
+!.env.fastapi.example
+!.env.grafana.example
+!.env.prometheus.example
+!.env.app.example
+!minirag/alembic.ini
+!minirag/alembic.ini.example

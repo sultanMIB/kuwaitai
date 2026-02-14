@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Oasis Camp App - Full Interaction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <style>
+        :root {
+            --primary-color: #2D5A27;
+            --accent-color: #F5E6CA;
+            --text-dark: #333;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: #ccc; margin: 0; display: flex; justify-content: center; }
+        
+        .app-container {
+            width: 375px; height: 100vh; background: var(--white);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3); position: relative; overflow-y: auto; overflow-x: hidden;
+        }
+
+        /* Pages Logic */
+        .page { display: none; min-height: 100%; position: relative; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Navigation Header */
+        header {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            position: absolute; top: 0; width: 100%; box-sizing: border-box; z-index: 100; color: var(--white);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Side Menu & Overlay */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; }
+        #sideMenu { 
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%; 
+            background: var(--white); z-index: 1001; transition: 0.4s cubic-bezier(0.1, 0.7, 1.0, 0.1); 
+            padding: 30px 20px; box-sizing: border-box; 
+        }
+        #sideMenu ul { list-style: none; padding: 20px 0; }
+        #sideMenu li { padding: 15px; border-radius: 10px; cursor: pointer; color: var(--text-dark); display: flex; align-items: center; gap: 15px; }
+        #sideMenu li:hover { background: var(--accent-color); }
+
+        /* Home Page - Slider */
+        .swiper { width: 100%; height: 320px; }
+        .swiper-slide { background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; position: relative; }
+        .swiper-slide::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); }
+        .slide-content { z-index: 2; text-align: center; }
+
+        /* UI Elements */
+        .actions { display: flex; justify-content: space-around; padding: 0 20px; margin-top: -25px; z-index: 10; position: relative; gap: 10px; }
+        .btn { flex: 1; padding: 14px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-primary { background: var(--primary-color); color: white; box-shadow: var(--shadow); }
+        .btn-outline { background: white; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        
+        .card { background: var(--accent-color); padding: 20px; border-radius: 20px; margin: 20px; }
+        .booking-form { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--primary-color); }
+        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+
+        /* Success & Cart Styles */
+        .status-screen { text-align: center; padding: 60px 20px; }
+        .status-icon { font-size: 70px; color: var(--primary-color); margin-bottom: 20px; }
+        
+        .back-btn { padding: 15px; color: var(--primary-color); cursor: pointer; font-size: 18px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="overlay" onclick="toggleMenu()"></div>
+    <div id="sideMenu">
+        <div style="font-size: 24px; cursor: pointer; text-align: right;" onclick="toggleMenu()">&times;</div>
+        <div style="text-align:center; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+            <i class="fas fa-user-circle" style="font-size: 50px; color: var(--primary-color);"></i>
+            <h4>Welcome, Adventurer!</h4>
+        </div>
+        <ul>
+            <li onclick="showPage('home'); toggleMenu()"><i class="fas fa-home"></i> Home</li>
+            <li onclick="showPage('booking'); toggleMenu()"><i class="fas fa-calendar-alt"></i> My Bookings</li>
+            <li onclick="alert('Searching...'); toggleMenu()"><i class="fas fa-search"></i> Discover More</li>
+            <li onclick="alert('No items in cart'); toggleMenu()"><i class="fas fa-shopping-cart"></i> Cart</li>
+            <li style="margin-top: 20px; color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <div id="home" class="page active">
+        <header>
+            <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer;"></i>
+            <div>
+                <i class="fas fa-search" onclick="alert('Search clicked')"></i>
+                <i class="fas fa-shopping-cart" onclick="showPage('booking')" style="margin-left:15px"></i>
+            </div>
+        </header>
+
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500')">
+                    <div class="slide-content"><h1>THE OASIS CAMP</h1><p>Luxury in the Wilderness</p></div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=500')">
+                    <div class="slide-content"><h1>UNFORGETTABLE NIGHTS</h1><p>Book your escape today</p></div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="showPage('booking')">📅 Book Now</button>
+            <a href="tel:+9665000000" class="btn btn-outline">📞 Contact</a>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h3><i class="fas fa-info-circle"></i> About Us</h3>
+                <p>A full-service family camp designed to give you an exceptional experience in the heart of nature.</p>
+            </div>
+            <div class="card">
+                <h3><i class="far fa-clock"></i> Hours</h3>
+                <p>Daily: 4 PM - 12 AM<br>Fri-Sat: 2 PM - 1 AM</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking" class="page" style="background: #fdfdfd;">
+        <div class="back-btn" onclick="showPage('home')"><i class="fas fa-chevron-left"></i> Back</div>
+        <div style="padding: 0 20px;">
+            <h2 style="color: var(--primary-color);">Reserve Your Spot</h2>
+            <div class="booking-form">
+                <div class="form-group">
+                    <label>Select Date</label>
+                    <input type="date" id="dateInput">
+                </div>
+                <div class="form-group">
+                    <label>Tent Type</label>
+                    <select id="tentType">
+                        <option value="150">Royal Tent (15 People) - $150</option>
+                        <option value="90">Standard Tent (8 People) - $90</option>
+                        <option value="50">Open Majlis - $50</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Extras</label>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" style="width: 20px;"> Firewood (+$20)
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" style="width: 20px;"> BBQ Dinner (+$40)
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="processBooking()">Confirm Reservation</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="success" class="page">
+        <div class="status-screen">
+            <div class="status-icon"><i class="fas fa-check-circle"></i></div>
+            <h2 style="color: var(--primary-color);">Success!</h2>
+            <p>Your booking has been received.<br>See you at the camp!</p>
+            <button class="btn btn-outline" style="margin: 40px auto; width: 80%;" onclick="showPage('home')">Back to Home</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    // Initialize Image Slider
+    const swiper = new Swiper(".mySwiper", {
+        loop: true,
+        autoplay: { delay: 3500 },
+        pagination: { el: ".swiper-pagination", clickable: true }
+    });
+
+    // Side Menu Toggle
+    function toggleMenu() {
+        const menu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('overlay');
+        if (menu.style.left === '0px') {
+            menu.style.left = '-280px';
+            overlay.style.display = 'none';
+        } else {
+            menu.style.left = '0px';
+            overlay.style.display = 'block';
+        }
+    }
+
+    // Page Navigation
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelector('.app-container').scrollTop = 0;
+    }
+
+    // Booking Logic
+    function processBooking() {
+        const date = document.getElementById('dateInput').value;
+        if(!date) {
+            alert("Please select a date first!");
+            return;
+        }
+        showPage('success');
+    }
+</script>
+
+</body>
+</html>

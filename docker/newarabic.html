@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخيم الواحة - النسخة الاحترافية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <style>
+        :root {
+            --primary: #2D5A27;
+            --accent: #F5E6CA;
+            --dark: #1a1a1a;
+            --white: #ffffff;
+            --gray: #f8f9fa;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #333; margin: 0; display: flex; justify-content: center; }
+        
+        .app-container {
+            width: 375px; height: 100vh; background: var(--white);
+            position: relative; overflow-y: auto; overflow-x: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .page { display: none; min-height: 100%; position: relative; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        header {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            position: absolute; top: 0; width: 100%; box-sizing: border-box; z-index: 100; color: var(--white);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+        }
+
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+        #sideMenu { 
+            position: fixed; top: 0; right: -280px; width: 280px; height: 100%; 
+            background: var(--white); z-index: 1001; transition: 0.3s ease-in-out; 
+            padding: 30px 20px; box-sizing: border-box; 
+        }
+        #sideMenu li { padding: 15px; list-style: none; cursor: pointer; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
+
+        .swiper { width: 100%; height: 320px; }
+        .swiper-slide { background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; position: relative; }
+        .swiper-slide::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
+
+        .actions { display: flex; gap: 10px; padding: 0 20px; margin-top: -25px; z-index: 10; position: relative; }
+        .btn { flex: 1; padding: 14px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        
+        .card { background: var(--accent); padding: 20px; border-radius: 20px; margin: 20px; }
+        .form-group { margin: 15px 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--primary); }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+
+        .admin-list-item { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-right: 5px solid var(--primary); }
+        #loader { display: none; text-align: center; padding: 10px; color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="overlay" onclick="toggleMenu()"></div>
+    <div id="sideMenu">
+        <h2 style="color: var(--primary);">قائمة الواحة</h2>
+        <ul style="padding: 0;">
+            <li onclick="showPage('home'); toggleMenu()"><i class="fas fa-home"></i> الرئيسية</li>
+            <li onclick="showPage('booking'); toggleMenu()"><i class="fas fa-calendar-alt"></i> حجز جديد</li>
+            <li onclick="showPage('admin'); toggleMenu()"><i class="fas fa-user-shield"></i> لوحة الإدارة</li>
+        </ul>
+    </div>
+
+    <div id="home" class="page active">
+        <header>
+            <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size: 20px;"></i>
+            <span style="font-weight: bold;">THE OASIS</span>
+            <i class="fas fa-shopping-cart" onclick="showPage('booking')" style="cursor:pointer; font-size: 20px;"></i>
+        </header>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500')">
+                    <div style="z-index:2; text-align:center;"><h1>الواحة</h1><p>تجربة تخييم فاخرة</p></div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=500')">
+                    <div style="z-index:2; text-align:center;"><h1>ليالي النجوم</h1><p>ذكريات لا تُنسى</p></div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="showPage('booking')">📅 احجز الآن</button>
+            <a href="tel:+9665000000" class="btn btn-outline">📞 اتصل بنا</a>
+        </div>
+        <div class="content" style="padding: 20px;">
+            <div class="card">
+                <h3>عن المخيم</h3>
+                <p>مخيم عائلي بخصوصية تامة، خدمات فندقية، ولمسة من سحر الطبيعة.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking" class="page">
+        <div style="padding: 20px; background: var(--primary); color: white;">
+            <i class="fas fa-chevron-right" onclick="showPage('home')" style="cursor:pointer"></i>
+            <span style="margin-right: 20px; font-weight: bold;">طلب حجز</span>
+        </div>
+        <div class="form-group">
+            <label>اختر التاريخ</label>
+            <input type="date" id="bookDate" onchange="checkAvailability()">
+            <small id="dateStatus" style="display:block; margin-top:5px;"></small>
+        </div>
+        <div class="form-group">
+            <label>نوع الخيمة</label>
+            <select id="tentStyle">
+                <option value="Royal">جناح ملكي (150$)</option>
+                <option value="Classic">خيمة كلاسيك (90$)</option>
+                <option value="Outdoor">مجلس خارجي (50$)</option>
+            </select>
+        </div>
+        <div id="loader"><i class="fas fa-spinner fa-spin"></i> جاري تأكيد الحجز...</div>
+        <div style="padding: 20px;">
+            <button id="confirmBtn" class="btn btn-primary" style="width: 100%;" onclick="saveBooking()">تأكيد الحجز والدفع</button>
+        </div>
+    </div>
+
+    <div id="success" class="page" style="text-align: center; padding-top: 80px;">
+        <i class="fas fa-check-circle" style="font-size: 80px; color: var(--primary);"></i>
+        <h2>تم الحجز بنجاح!</h2>
+        <p>ننتظركم في الواحة.</p>
+        <button class="btn btn-outline" style="margin: 30px auto; width: 200px;" onclick="showPage('home')">العودة للرئيسية</button>
+    </div>
+
+    <div id="admin" class="page" style="background: var(--gray);">
+        <div id="adminAuth" style="padding: 50px 20px; text-align: center;">
+            <i class="fas fa-user-lock" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+            <h3>دخول الإدارة</h3>
+            <input type="email" id="adminEmail" placeholder="البريد الإلكتروني" style="margin-bottom:10px;">
+            <input type="password" id="adminPass" placeholder="كلمة المرور" style="margin-bottom:20px;">
+            <button class="btn btn-primary" style="width:100%" onclick="handleLogin()">دخول</button>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="showPage('home')">رجوع</button>
+        </div>
+
+        <div id="adminPanel" style="display: none;">
+            <div style="padding: 20px; background: var(--dark); color: white; display: flex; justify-content: space-between; align-items:center;">
+                <i class="fas fa-times" onclick="showPage('home')"></i>
+                <span>قائمة الحجوزات اللحظية</span>
+                <i class="fas fa-sign-out-alt" onclick="handleLogout()" style="cursor:pointer"></i>
+            </div>
+            <div id="adminContent" style="padding: 20px;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDIoug-ZB6k81g5L0PZVQHAgR8pZ_77Oa8",
+  authDomain: "qamra-camp.firebaseapp.com",
+  projectId: "qamra-camp",
+  storageBucket: "qamra-camp.firebasestorage.app",
+  messagingSenderId: "23824989973",
+  appId: "1:23824989973:web:33be0603fdbc55a83f731c",
+  measurementId: "G-FZ78RWVRM4"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let reservedDates = [];
+
+    // --- نظام الصفحات والقائمة ---
+    window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    };
+
+    window.toggleMenu = () => {
+        const menu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('overlay');
+        const isOpen = menu.style.right === '0px';
+        menu.style.right = isOpen ? '-280px' : '0px';
+        overlay.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // --- إدارة الحجوزات والتواريخ ---
+    const loadAvailability = () => {
+        onSnapshot(collection(db, "bookings"), (snap) => {
+            reservedDates = snap.docs.map(doc => doc.data().date);
+        });
+    };
+
+    window.checkAvailability = () => {
+        const selected = document.getElementById('bookDate').value;
+        const status = document.getElementById('dateStatus');
+        const btn = document.getElementById('confirmBtn');
+
+        if (reservedDates.includes(selected)) {
+            status.innerText = "❌ هذا التاريخ محجوز مسبقاً!";
+            status.style.color = "red";
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+        } else {
+            status.innerText = "✅ التاريخ متاح للحجز";
+            status.style.color = "green";
+            btn.disabled = false;
+            btn.style.opacity = "1";
+        }
+    };
+
+    window.saveBooking = async () => {
+        const date = document.getElementById('bookDate').value;
+        const style = document.getElementById('tentStyle').value;
+        if(!date) return alert("يرجى اختيار تاريخ");
+
+        document.getElementById('loader').style.display = "block";
+        try {
+            await addDoc(collection(db, "bookings"), {
+                date, style, createdAt: new Date(), status: "Paid"
+            });
+            showPage('success');
+        } catch (e) { alert("حدث خطأ في الاتصال"); }
+        document.getElementById('loader').style.display = "none";
+    };
+
+    // --- إدارة الأدمن (Firebase Auth) ---
+    window.handleLogin = async () => {
+        const email = document.getElementById('adminEmail').value;
+        const pass = document.getElementById('adminPass').value;
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+        } catch (e) { alert("خطأ في بيانات الدخول"); }
+    };
+
+    window.handleLogout = () => signOut(auth);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('adminAuth').style.display = "none";
+            document.getElementById('adminPanel').style.display = "block";
+            listenToBookings();
+        } else {
+            document.getElementById('adminAuth').style.display = "block";
+            document.getElementById('adminPanel').style.display = "none";
+        }
+    });
+
+    const listenToBookings = () => {
+        const container = document.getElementById('adminContent');
+        const q = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snap) => {
+            container.innerHTML = "";
+            snap.forEach(doc => {
+                const b = doc.data();
+                container.innerHTML += `
+                    <div class="admin-list-item">
+                        <strong>${b.style}</strong> <br>
+                        <small>التاريخ: ${b.date}</small>
+                    </div>`;
+            });
+        });
+    };
+
+    // التشغيل عند البداية
+    window.onload = () => {
+        loadAvailability();
+        document.getElementById('bookDate').min = new Date().toISOString().split("T")[0];
+    };
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        new Swiper(".mySwiper", {
+            loop: true, autoplay: { delay: 3000 },
+            pagination: { el: ".swiper-pagination" }
+        });
+    });
+</script>
+</body>
+</html>

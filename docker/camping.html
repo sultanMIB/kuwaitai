@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>مخيم السعادة - منتجع طبيعي عائلي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 0 15px;
+            margin: 0 auto;
+        }
+        
+        /* الهيدر */
+        header {
+            background-color: #2d5a27;
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .menu-icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .menu-icons span {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* الهيرو سيكشن */
+        .hero {
+            position: relative;
+            height: 250px;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://via.placeholder.com/800x400/2d5a27/ffffff?text=مخيم+السعادة') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .hero-content h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        /* معلومات سريعة */
+        .quick-info {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-item span {
+            display: block;
+            font-size: 1.5rem;
+        }
+        
+        .info-item small {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        /* الأقسام */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2d5a27;
+            border-right: 5px solid #ff9800;
+            padding-right: 10px;
+        }
+        
+        /* المميزات */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .feature-desc {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* معرض الصور */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            height: 120px;
+            background: #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .gallery-item span {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px;
+            text-align: center;
+        }
+        
+        /* الباقات والأسعار */
+        .pricing-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        
+        .pricing-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-icon {
+            font-size: 2rem;
+        }
+        
+        .pricing-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .pricing-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .pricing-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff9800;
+            margin: 10px 0;
+        }
+        
+        .btn-block {
+            width: 100%;
+            background: #2d5a27;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        /* الإضافات */
+        .extras-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .extra-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .extra-price {
+            color: #ff9800;
+            font-weight: bold;
+        }
+        
+        /* نموذج الحجز */
+        .booking-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d5a27;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        
+        .counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            background: #2d5a27;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .counter-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .estimated-price {
+            background: #2d5a27;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.2rem;
+        }
+        
+        /* طرق الدفع */
+        .payment-methods {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .payment-method {
+            flex: 1;
+            min-width: 70px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .bank-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+            margin: 10px 0;
+        }
+        
+        /* الشروط */
+        .terms-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .allowed, .not-allowed {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .allowed {
+            background: #e8f5e8;
+        }
+        
+        .not-allowed {
+            background: #ffebee;
+        }
+        
+        .allowed h4, .not-allowed h4 {
+            margin-bottom: 10px;
+        }
+        
+        .allowed ul, .not-allowed ul {
+            list-style: none;
+        }
+        
+        .allowed li, .not-allowed li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        /* التواصل */
+        .contact-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .contact-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+        
+        .whatsapp-btn {
+            background: #25d366;
+            color: white;
+        }
+        
+        .call-btn {
+            background: #2d5a27;
+            color: white;
+        }
+        
+        .map {
+            width: 100%;
+            height: 200px;
+            background: #ddd;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e0e0;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .social-icons span {
+            font-size: 2rem;
+        }
+        
+        /* التقييمات */
+        .review-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .review-name {
+            font-weight: bold;
+        }
+        
+        .review-date {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .review-stars {
+            color: #ff9800;
+            margin-bottom: 5px;
+        }
+        
+        /* الأسئلة الشائعة */
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: #2d5a27;
+            margin-bottom: 5px;
+        }
+        
+        .faq-answer {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* الفوتر */
+        footer {
+            background: #2d5a27;
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            margin-top: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .copyright {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <h1>🌲 مخيم السعادة</h1>
+            </div>
+            <div class="menu-icons">
+                <span>🔍</span>
+                <span>🛒</span>
+                <span>☰</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>مخيم السعادة</h2>
+                <p>"استمتع بملاذك الطبيعي بعيداً عن صخب المدينة"</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary">📅 احجز الآن</a>
+                    <a href="#" class="btn btn-secondary">📞 اتصل بنا</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Info -->
+        <div class="quick-info">
+            <div class="info-item">
+                <span>📍</span>
+                <small>الرياض</small>
+            </div>
+            <div class="info-item">
+                <span>⭐</span>
+                <small>4.8 (300+)</small>
+            </div>
+            <div class="info-item">
+                <span>⏰</span>
+                <small>4م - 12ص</small>
+            </div>
+        </div>
+
+        <!-- نبذة سريعة -->
+        <section class="section">
+            <h3 class="section-title">من نحن؟</h3>
+            <p>مخيم عائلي متكامل الخدمات، مصمم ليمنحك تجربة استثنائية في أحضان الطبيعة. مساحات واسعة، خصوصية تامة، وخدمات راقية.</p>
+            <p style="margin-top: 10px;"><strong>⏰ متاح يومياً:</strong> 4:00 عصراً - 12:00 صباحاً (الجمعة: 2:00 ظهراً - 1:00 صباحاً)</p>
+        </section>
+
+        <!-- المميزات -->
+        <section class="section">
+            <h3 class="section-title">مميزاتنا</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏕️</div>
+                    <div class="feature-title">خيام فاخرة</div>
+                    <div class="feature-desc">مكيفة ونظيفة</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔥</div>
+                    <div class="feature-title">مشبات مجهزة</div>
+                    <div class="feature-desc">حطب متوفر</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🍖</div>
+                    <div class="feature-title">شوايات خاصة</div>
+                    <div class="feature-desc">فحم مجاني</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚿</div>
+                    <div class="feature-title">خدمات متكاملة</div>
+                    <div class="feature-desc">دورات مياه نظيفة</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📶</div>
+                    <div class="feature-title">إنترنت لاسلكي</div>
+                    <div class="feature-desc">سرعات عالية</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🅿️</div>
+                    <div class="feature-title">موقف سيارات</div>
+                    <div class="feature-desc">آمن وواسع</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- معرض الصور -->
+        <section class="section">
+            <h3 class="section-title">📸 صور من المخيم</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150/2d5a27/ffffff?text=الخيام" alt="الخيام">
+                    <span>الخيام</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150/ff9800/ffffff?text=المشبات" alt="المشبات">
+                    <span>المشبات</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150/2196f3/ffffff?text=المسبح" alt="المسبح">
+                    <span>المسبح</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150/9c27b0/ffffff?text=ملعب+الأطفال" alt="ملعب الأطفال">
+                    <span>ملعب الأطفال</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150/4caf50/ffffff?text=الجلسات" alt="الجلسات">
+                    <span>الجلسات</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150/795548/ffffff?text=المدخل" alt="المدخل">
+                    <span>المدخل</span>
+                </div>
+            </div>
+            <a href="#" style="display: block; text-align: center; margin-top: 15px; color: #2d5a27;">شاهد معرض الصور كاملاً</a>
+        </section>
+
+        <!-- الباقات والأسعار -->
+        <section class="section">
+            <h3 class="section-title">💰 الباقات والأسعار</h3>
+            
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <span class="pricing-icon">☀️</span>
+                    <span class="pricing-title">الباقة اليومية</span>
+                </div>
+                <div class="pricing-details">
+                    <span>🕒 8:00 صباحاً - 11:00 مساءً</span>
+                    <span>👥 حتى 6 أشخاص</span>
+                </div>
+                <div class="pricing-price">300 ريال</div>
+                <button class="btn-block">احجز هذه الباقة</button>
+            </div>
+            
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <span class="pricing-icon">🌙</span>
+                    <span class="pricing-title">الباقة الليلية (مبيت)</span>
+                </div>
+                <div class="pricing-details">
+                    <span>🕒 4:00 عصراً - 12:00 ظهراً</span>
+                    <span>👥 حتى 6 أشخاص</span>
+                </div>
+                <div class="pricing-price">500 ريال</div>
+                <button class="btn-block">احجز هذه الباقة</button>
+            </div>
+            
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <span class="pricing-icon">📅</span>
+                    <span class="pricing-title">الباقة الأسبوعية</span>
+                </div>
+                <div class="pricing-details">
+                    <span>🕒 7 أيام كاملة</span>
+                    <span>👥 حتى 6 أشخاص</span>
+                </div>
+                <div class="pricing-price">2000 ريال <span style="font-size: 1rem; color: #666;">(وفر 400)</span></div>
+                <button class="btn-block">احجز هذه الباقة</button>
+            </div>
+        </section>
+
+        <!-- خيارات إضافية -->
+        <section class="section">
+            <h3 class="section-title">➕ إضافات اختيارية</h3>
+            <div class="extras-grid">
+                <div class="extra-item">
+                    <div>👤 شخص إضافي</div>
+                    <div class="extra-price">50 ريال</div>
+                </div>
+                <div class="extra-item">
+                    <div>🏕️ خيمة إضافية</div>
+                    <div class="extra-price">200 ريال</div>
+                </div>
+                <div class="extra-item">
+                    <div>🍖 شويّة خاصة</div>
+                    <div class="extra-price">100 ريال</div>
+                </div>
+                <div class="extra-item">
+                    <div>🎉 منظم حفلات</div>
+                    <div class="extra-price">حسب الاتفاق</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- نموذج حجز سريع -->
+        <section class="section">
+            <h3 class="section-title">📅 احجز الآن</h3>
+            <div class="booking-form">
+                <div class="form-group">
+                    <label>تاريخ القدوم</label>
+                    <input type="date" class="form-control" value="2024-01-01">
+                </div>
+                <div class="form-group">
+                    <label>تاريخ المغادرة</label>
+                    <input type="date" class="form-control" value="2024-01-02">
+                </div>
+                <div class="form-group">
+                    <label>عدد الأشخاص</label>
+                    <div class="counter">
+                        <button class="counter-btn" onclick="decrement()">-</button>
+                        <span class="counter-value" id="peopleCount">4</span>
+                        <button class="counter-btn" onclick="increment()">+</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>الباقة</label>
+                    <select class="form-control">
+                        <option>الباقة اليومية - 300 ريال</option>
+                        <option>الباقة الليلية - 500 ريال</option>
+                        <option>الباقة الأسبوعية - 2000 ريال</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>إضافات</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox"> شخص إضافي (+50 ريال)
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox"> خيمة إضافية (+200 ريال)
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox"> شويّة خاصة (+100 ريال)
+                        </label>
+                    </div>
+                </div>
+                <div class="estimated-price">
+                    السعر التقديري: 500 ريال
+                </div>
+                <button class="btn-block" style="background: #ff9800;">✅ تأكيد الحجز</button>
+            </div>
+        </section>
+
+        <!-- طرق الدفع -->
+        <section class="section">
+            <h3 class="section-title">💰 طرق الدفع</h3>
+            <div class="payment-methods">
+                <div class="payment-method">💳 فيزا</div>
+                <div class="payment-method">💳 مدى</div>
+                <div class="payment-method">📱 أبل باي</div>
+            </div>
+            <p style="margin-bottom: 10px;">🔐 دفع إلكتروني آمن عبر <strong>MyFatoorah</strong></p>
+            
+            <h4 style="margin: 15px 0 10px;">🏦 تحويل بنكي:</h4>
+            <div class="bank-details">
+                SA00 0000 0000 0000 0000 0000<br>
+                البنك الأهلي السعودي
+            </div>
+            
+            <p>💵 <strong>نقداً:</strong> عند الوصول (يُفضل الدفع المسبق)</p>
+            
+            <button class="btn-block" style="margin-top: 15px;">ادفع الآن عبر البطاقة</button>
+        </section>
+
+        <!-- شروط وأحكام -->
+        <section class="section">
+            <h3 class="section-title">📋 الشروط والأحكام</h3>
+            <div class="terms-grid">
+                <div class="allowed">
+                    <h4>✅ مسموح:</h4>
+                    <ul>
+                        <li>✓ العائلات فقط</li>
+                        <li>✓ الهدوء بعد 11 مساءً</li>
+                        <li>✓ إحضار الأكل والمشروبات</li>
+                    </ul>
+                </div>
+                <div class="not-allowed">
+                    <h4>❌ ممنوع:</h4>
+                    <ul>
+                        <li>✗ الألعاب النارية</li>
+                        <li>✗ الشيشة والمعسل</li>
+                        <li>✗ حيوانات أليفة</li>
+                        <li>✗ الموسيقى الصاخبة</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h4 style="margin: 15px 0 10px;">⚠️ سياسة الإلغاء:</h4>
+            <ul style="list-style: none;">
+                <li>• قبل 24 ساعة: استرداد كامل</li>
+                <li>• نفس اليوم: خصم 50%</li>
+                <li>• عدم الحضور: خصم 100%</li>
+            </ul>
+        </section>
+
+        <!-- التواصل والموقع -->
+        <section class="section">
+            <h3 class="section-title">📞 تواصل معنا</h3>
+            <div class="contact-buttons">
+                <a href="https://wa.me/966500000000" class="contact-btn whatsapp-btn">📱 واتساب</a>
+                <a href="tel:+966500000000" class="contact-btn call-btn">📞 اتصال</a>
+            </div>
+            
+            <div class="map">
+                [خريطة جوجل - ضع الرابط هنا]
+            </div>
+            
+            <p style="margin: 10px 0;">📍 الرياض - حي النخيل</p>
+            <p>📧 info@alsaada-camp.com</p>
+            
+            <div class="social-icons">
+                <span>📷</span>
+                <span>📱</span>
+                <span>🐦</span>
+            </div>
+        </section>
+
+        <!-- تقييمات الزوار -->
+        <section class="section">
+            <h3 class="section-title">⭐ آراء الزوار</h3>
+            
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-name">أبو محمد</span>
+                    <span class="review-date">منذ أسبوع</span>
+                </div>
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p>مكان رائع ونظيف، الخدمة ممتازة والتعامل راقي</p>
+            </div>
+            
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-name">أم سعد</span>
+                    <span class="review-date">منذ 3 أيام</span>
+                </div>
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p>المشبات ممتازة والخصوصية جميلة، حجزناها للعائلة وكانت تجربة ممتعة</p>
+            </div>
+            
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-name">أحمد</span>
+                    <span class="review-date">منذ شهر</span>
+                </div>
+                <div class="review-stars">⭐⭐⭐⭐</div>
+                <p>جميل جداً لكن الطريق للمخيم يحتاج تحسين</p>
+            </div>
+            
+            <button class="btn-block" style="background: transparent; border: 2px solid #2d5a27; color: #2d5a27; margin-top: 10px;">📝 أضف تقييمك</button>
+        </section>
+
+        <!-- أسئلة شائعة -->
+        <section class="section">
+            <h3 class="section-title">❓ أسئلة شائعة</h3>
+            
+            <div class="faq-item">
+                <div class="faq-question">س: هل يمكن إحضار ألعاب نارية؟</div>
+                <div class="faq-answer">ج: ممنوع منعاً باتاً حفاظاً على السلامة.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">س: هل يوجد تكييف في الخيام؟</div>
+                <div class="faq-answer">ج: نعم، جميع الخيام مكيفة ومجهزة بالكامل.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">س: كم سعر الشخص الإضافي؟</div>
+                <div class="faq-answer">ج: 50 ريال للشخص الواحد مع توفير فراش إضافي.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">س: هل الدفع مقدم أم عند الوصول؟</div>
+                <div class="faq-answer">ج: يفضل دفع 50% لتأكيد الحجز والباقي عند الوصول.</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <h3>🌲 مخيم السعادة</h3>
+        <p>حيث الطبيعة تلتقي بالرفاهية</p>
+        
+        <div class="footer-links">
+            <a href="#">سياسة الخصوصية</a>
+            <a href="#">الشروط والأحكام</a>
+            <a href="#">الملفات التعريفية</a>
+        </div>
+        
+        <div class="copyright">
+            جميع الحقوق محفوظة © 2024 مخيم السعادة
+        </div>
+    </footer>
+
+    <script>
+        // عداد الأشخاص
+        function increment() {
+            let count = document.getElementById('peopleCount');
+            count.innerText = parseInt(count.innerText) + 1;
+        }
+        
+        function decrement() {
+            let count = document.getElementById('peopleCount');
+            if (parseInt(count.innerText) > 1) {
+                count.innerText = parseInt(count.innerText) - 1;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Oasis Camp - Full App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <style>
+        :root {
+            --primary: #2D5A27;
+            --accent: #F5E6CA;
+            --dark: #1a1a1a;
+            --white: #ffffff;
+            --gray: #f8f9fa;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: #333; margin: 0; display: flex; justify-content: center; }
+        
+        /* App Frame */
+        .app-container {
+            width: 375px; height: 100vh; background: var(--white);
+            position: relative; overflow-y: auto; overflow-x: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* Pages System */
+        .page { display: none; min-height: 100%; position: relative; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Header Navigation */
+        header {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            position: absolute; top: 0; width: 100%; box-sizing: border-box; z-index: 100; color: var(--white);
+        }
+
+        /* Side Menu & Overlay */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; }
+        #sideMenu { 
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%; 
+            background: var(--white); z-index: 1001; transition: 0.4s cubic-bezier(0.1, 0.7, 1.0, 0.1); 
+            padding: 30px 20px; box-sizing: border-box; 
+        }
+        #sideMenu li { padding: 15px; list-style: none; cursor: pointer; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
+
+        /* Home Page - Slider */
+        .swiper { width: 100%; height: 320px; }
+        .swiper-slide { background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; position: relative; }
+        .swiper-slide::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); }
+        .slide-content { z-index: 2; text-align: center; }
+
+        /* Buttons & Cards */
+        .actions { display: flex; gap: 10px; padding: 0 20px; margin-top: -25px; z-index: 10; position: relative; }
+        .btn { flex: 1; padding: 14px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        
+        .card { background: var(--accent); padding: 20px; border-radius: 20px; margin: 20px; }
+        
+        /* Form Elements */
+        .form-group { margin: 15px 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--primary); }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; box-sizing: border-box; }
+
+        /* Admin Styles */
+        .admin-list-item { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid var(--primary); }
+
+        /* Utility */
+        #loader { display: none; text-align: center; padding: 10px; color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="overlay" onclick="toggleMenu()"></div>
+    <div id="sideMenu">
+        <h2 style="color: var(--primary);">Oasis Menu</h2>
+        <ul style="padding: 0;">
+            <li onclick="showPage('home'); toggleMenu()"><i class="fas fa-home"></i> Home</li>
+            <li onclick="showPage('booking'); toggleMenu()"><i class="fas fa-calendar-alt"></i> New Booking</li>
+            <li onclick="showPage('admin'); toggleMenu()"><i class="fas fa-user-shield"></i> Admin Panel</li>
+            <li style="color: red; margin-top: 50px;"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <div id="home" class="page active">
+        <header>
+            <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size: 20px;"></i>
+            <i class="fas fa-shopping-cart" onclick="showPage('booking')" style="cursor:pointer; font-size: 20px;"></i>
+        </header>
+
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500')">
+                    <div class="slide-content"><h1>Beutcom</h1><p>Luxury Camping Experience</p></div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=500')">
+                    <div class="slide-content"><h1>Qamra Camp</h1><p>Unforgettable Memories</p></div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="showPage('booking')">📅 Book Now</button>
+            <a href="tel:+9665000000" class="btn btn-outline">📞 Contact</a>
+        </div>
+
+        <div class="content" style="padding: 20px;">
+            <div class="card">
+                <h3>About Us</h3>
+                <p>Family-friendly camp with complete privacy, high-end services, and a touch of nature's magic.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking" class="page">
+        <div style="padding: 20px; background: var(--primary); color: white;">
+            <i class="fas fa-chevron-left" onclick="showPage('home')" style="cursor:pointer"></i>
+            <span style="margin-left: 20px; font-weight: bold;">Reservation</span>
+        </div>
+        
+        <div class="form-group">
+            <label>Pick a Date</label>
+            <input type="date" id="bookDate">
+        </div>
+        <div class="form-group">
+            <label>Tent Style</label>
+            <select id="tentStyle">
+                <option value="Royal">Royal Suite ($150)</option>
+                <option value="Classic">Classic Tent ($90)</option>
+                <option value="Outdoor">Open Majlis ($50)</option>
+            </select>
+        </div>
+        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Syncing with Cloud...</div>
+        <div style="padding: 20px;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="saveBooking()">Confirm & Pay</button>
+        </div>
+    </div>
+
+    <div id="success" class="page" style="text-align: center; padding-top: 80px;">
+        <i class="fas fa-check-circle" style="font-size: 80px; color: var(--primary);"></i>
+        <h2>Reserved!</h2>
+        <p>Your booking is stored in Firebase.</p>
+        <button class="btn btn-outline" style="margin: 30px auto; width: 200px;" onclick="showPage('home')">Home</button>
+    </div>
+
+    <div id="admin" class="page" style="background: var(--gray);">
+        <div style="padding: 20px; background: var(--dark); color: white; display: flex; justify-content: space-between;">
+            <i class="fas fa-times" onclick="showPage('home')"></i>
+            <span>Admin Control</span>
+            <i class="fas fa-sync" onclick="fetchBookings()"></i>
+        </div>
+        <div id="adminContent" style="padding: 20px;">
+            <p>Loading live data...</p>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script type="module">
+    // --- FIREBASE CONFIGURATION ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Navigation Function
+    window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'admin') fetchBookings();
+    };
+
+    // Toggle Menu
+    window.toggleMenu = () => {
+        const menu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('overlay');
+        const isOpen = menu.style.left === '0px';
+        menu.style.left = isOpen ? '-280px' : '0px';
+        overlay.style.display = isOpen ? 'none' : 'block';
+    };
+
+    // Save Booking to Firebase
+    window.saveBooking = async () => {
+        const date = document.getElementById('bookDate').value;
+        const style = document.getElementById('tentStyle').value;
+        if(!date) return alert("Please select a date");
+
+        document.getElementById('loader').style.display = "block";
+        try {
+            await addDoc(collection(db, "bookings"), {
+                date,
+                style,
+                createdAt: new Date(),
+                status: "Paid"
+            });
+            showPage('success');
+        } catch (e) { alert("Firebase Error: " + e.message); }
+        document.getElementById('loader').style.display = "none";
+    };
+
+    // Fetch Bookings for Admin
+    window.fetchBookings = async () => {
+        const container = document.getElementById('adminContent');
+        container.innerHTML = "Fetching latest...";
+        try {
+            const q = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+            const snap = await getDocs(q);
+            container.innerHTML = "";
+            snap.forEach(doc => {
+                const b = doc.data();
+                container.innerHTML += `
+                    <div class="admin-list-item">
+                        <strong>${b.style}</strong> <br>
+                        <small>Date: ${b.date}</small>
+                    </div>`;
+            });
+        } catch (e) { container.innerHTML = "Error loading data."; }
+    };
+</script>
+
+<script>
+    // Initialize Swiper (Regular JS)
+    document.addEventListener('DOMContentLoaded', () => {
+        new Swiper(".mySwiper", {
+            loop: true,
+            autoplay: { delay: 3000 },
+            pagination: { el: ".swiper-pagination" }
+        });
+    });
+</script>
+
+</body>
+</html>
